@@ -1,0 +1,53 @@
+import { TOKEN } from "../../../utils/constants";
+import { asyncLocalStorage } from "../../../utils/helper";
+
+export const getAll<%= entity %>s = async () => {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/<%= entity %>`,{
+    headers: {
+      Authorization: `Bearer ${await (asyncLocalStorage.getItem(TOKEN))}`,
+    },
+  });
+  return (await response.json()).data;
+};
+
+export const getOne<%= entity %> = async (id: string) => {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/<%= entity %>/${id}`,{
+    headers: {
+      Authorization: `Bearer ${await (asyncLocalStorage.getItem(TOKEN))}`,
+    },
+  });
+  return (await response.json()).data;
+};
+
+export const create<%= entity %> = async (data: any) => {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/<%= entity %>`, {
+    method: "POST",
+    body: JSON.stringify(data),
+    headers: {
+      Authorization: `Bearer ${await (asyncLocalStorage.getItem(TOKEN))}`,
+    },
+  });
+  return response.json();
+};
+
+export const update<%= entity %> = async (id: string, data: any) => {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/<%= entity %>/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(data),
+    headers: {
+      Authorization: `Bearer ${await (asyncLocalStorage.getItem(TOKEN))}`,
+    },
+  });
+  return response.json();
+};
+
+export const delete<%= entity %> = async (id: string) => {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/<%= entity %>/${id}`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${await (asyncLocalStorage.getItem(TOKEN))}`,
+    },
+  });
+  return response.json();
+};
+

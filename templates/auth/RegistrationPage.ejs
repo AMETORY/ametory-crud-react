@@ -1,0 +1,87 @@
+import React from "react";
+import { useState, type FC } from "react";
+import { registrationPost } from "../components/Login/Api/loginApi";
+import { asyncLocalStorage } from "../utils/helper";
+import { TOKEN } from "../utils/constants";
+import { Link, useNavigate } from "react-router-dom";
+import { successToast, errorToast } from "../utils/helper-ui";
+
+interface RegistrationPageProps {}
+
+const RegistrationPage: FC<RegistrationPageProps> = () => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const nav = useNavigate()
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    // Add logic to handle form submission, e.g., API call or form validation
+
+    try {
+      const response = await registrationPost({ name, email });
+      if (response.error) {
+        throw response.error;
+      }
+      await asyncLocalStorage.setItem(TOKEN, response.token);
+      successToast("Registration successful, please check your email first, for next process");
+      setTimeout(() => {
+        nav("/login")
+      }, 1000);
+      
+    } catch (error) {
+      errorToast(`${error}`);
+    }
+  };
+  return (
+    <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-br from-red-500 to-purple-500">
+      <form
+        className="bg-white shadow-md rounded-xl px-8 pt-6 pb-8 mb-4 min-w-[400px]"
+        onSubmit={handleSubmit}
+      >
+        <h1 className="text-2xl font-semibold mb-4">Registration</h1>
+        <div className="mb-4">
+          <label
+            className="block text-gray-700 text-sm font-bold mb-2"
+            htmlFor="name"
+          >
+            Name
+          </label>
+          <input
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="name"
+            type="name"
+            placeholder="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </div>
+        <div className="mb-6">
+          <label
+            className="block text-gray-700 text-sm font-bold mb-2"
+            htmlFor="email"
+          >
+            Email
+          </label>
+          <input
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+            id="email"
+            type="email"
+            placeholder="******************"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+        <div className="flex items-center justify-between">
+          <button
+            className="bg-gradient-to-br from-red-500 to-purple-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            type="submit"
+          >
+            Sign Up
+          </button>
+          
+        </div>
+      </form>
+    </div>
+  );
+};
+export default RegistrationPage;

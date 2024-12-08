@@ -1,0 +1,28 @@
+export const loginPost = async (data: any) => {
+  const response = await fetch(
+    `${process.env.REACT_APP_API_URL}/api/v1/Auth/Login`,
+    {
+      method: "POST",
+      body: JSON.stringify(data),
+    }
+  );
+  return response.json();
+};
+
+export const registrationPost = async (data: any) => {
+  const response = await fetch(
+    `${process.env.REACT_APP_API_URL}/api/v1/Auth/Registration`,
+    {
+      method: "POST",
+      body: JSON.stringify(data),
+    }
+  );
+  return response.json();
+};
+
+export const verification = async (id: any) => {
+  const response = await fetch(
+    `${process.env.REACT_APP_API_URL}/api/v1/Auth/Verification/${id}`,
+  );
+  return response.json();
+};

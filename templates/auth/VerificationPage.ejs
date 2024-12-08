@@ -1,0 +1,50 @@
+import { useEffect, useState, type FC } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { verification } from "../components/Login/Api/loginApi";
+import { errorToast, successToast } from "../utils/helper-ui";
+
+interface VerificationPageProps {}
+
+const VerificationPage: FC<VerificationPageProps> = () => {
+  const nav = useNavigate()
+  const {id} = useParams();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true)
+  
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return
+    if (!id) return
+      verificationProcess();
+  }, [id, mounted]);
+  const verificationProcess = async () => {
+    // Add logic to handle form submission, e.g., API call or form validation
+
+    try {
+      const response = await verification(id!);
+      if (response.error) {
+        throw response.error;
+      }
+      successToast("Registration successful");
+      setTimeout(() => {
+        nav("/login")
+      }, 1000);
+    } catch (error) {
+      errorToast(`${error}`);
+    }
+  };
+  return (
+    <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-br from-red-500 to-purple-500">
+      <div
+        className="bg-white shadow-md rounded-xl px-8 pt-6 pb-8 mb-4 min-w-[400px]"
+      >
+        <h1 className="text-2xl font-semibold mb-4">Verification</h1>
+        <p className="text-gray-700 text-center mb-4">Please wait for the verification process</p>
+      </div>
+    </div>
+  );
+};
+export default VerificationPage;

@@ -1,0 +1,40 @@
+import React, { useState } from 'react';
+import { create<%= entity %>, update<%= entity %> } from '../Api/<%= entityCamelCase %>Api';
+import { <%= entity %> } from '../../../models/<%= entity %>';
+
+const <%= entity %>Form: React.FC<{ id?: string }> = ({ id }) => {
+  const [formData, setFormData] = useState<<%= entity %>>();
+
+  const handleSubmit = async () => {
+    if (id) {
+      await update<%= entity %>(id, formData);
+    } else {
+      await create<%= entity %>(formData);
+    }
+  };
+
+  return (
+    <div className="p-4">
+      <h1 className="text-xl font-bold mb-4"><%= entity %> Form</h1>
+      <% fields.forEach((field) => { %>
+        <label className="block mb-2">
+          <span className="text-gray-700"><%= toPascalCase(field.name) %></span>
+          <input
+            type="text"
+            className="block w-full mt-1 border border-gray-300 rounded-md"
+            value={formData?.<%= toSnakeCase(field.name)  %>}
+            onChange={(e) => setFormData({ ...formData!, <%= toSnakeCase(field.name)  %>: <%= field.formInput  %> })}
+          />
+        </label>
+      <% }); %>
+      <button
+        onClick={handleSubmit}
+        className="bg-blue-500 text-white px-4 py-2 rounded-md mt-4"
+      >
+        Submit
+      </button>
+    </div>
+  );
+};
+
+export default <%= entity %>Form;
