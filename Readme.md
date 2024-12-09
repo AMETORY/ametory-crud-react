@@ -58,12 +58,14 @@ Replace <project-name> with the desired project folder name. This will:
 ### 2. Prepare the Input Excel File
 Prepare an Excel file (e.g., definitions.xlsx) that defines the features, fields, and database columns. Here is an example structure:
 
-| Model Name | Field Name | Field Type | DB Type |
-|------------|------------|------------|---------|
-| User       | Name       | string     | varchar(255) |
-| User       | Age        | int        | int     |
-| Product    | Name       | string     | varchar(255) |
-| Product    | Price      | float      | decimal(10,2) |
+| Model Name | Field Name | Field Type | DB Type | Not Null | Default |
+|------------|------------|------------|---------|----------|---------|
+| User       | ID         | int        | int     |     v    |    1    |
+| User       | Name       | string     | varchar(255) |     |         |
+| User       | Age        | int        | int     |          |         |
+| Product    | ID         | int        | int     |          |         |
+| Product    | Name       | string     | varchar(255) |     |         |
+| Product    | Price      | float      | decimal(10,2) |    |         |
 
 ### 3. Run the CRUD Generator
 Generate CRUD functionality for the features defined in the Excel file:
