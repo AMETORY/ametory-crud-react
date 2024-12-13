@@ -1,11 +1,11 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { getAll<%= entity %>s } from '../Api/<%= entityCamelCase %>Api';
-import { <%= entity %> } from '../../../models/<%= entity %>';
+import { getAll<%= toPascalCase(entity) %>s } from '../Api/<%= entityCamelCase %>Api';
+import { <%= toPascalCase(entity) %> } from '../../../models/<%= toPascalCase(entity) %>';
 import { BsTrash3 } from "react-icons/bs";
 
 const <%= toPascalCase(entity) %>List: React.FC = () => {
-  const [data, setData] = useState<<%= entity %>[]>();
+  const [data, setData] = useState<<%= toPascalCase(entity) %>[]>();
 
   useEffect(() => {
     getAll<%= toPascalCase(entity) %>s().then(setData);

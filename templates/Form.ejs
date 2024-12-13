@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { create<%= entity %>, update<%= entity %> } from '../Api/<%= entityCamelCase %>Api';
-import { <%= entity %> } from '../../../models/<%= entity %>';
+import { create<%= toPascalCase(entity) %>, update<%= toPascalCase(entity) %> } from '../Api/<%= entityCamelCase %>Api';
+import { <%= toPascalCase(entity) %> } from '../../../models/<%= toPascalCase(entity) %>';
 
 const <%= toPascalCase(entity) %>Form: React.FC<{ id?: string }> = ({ id }) => {
   const [formData, setFormData] = useState<<%= entity %>>();

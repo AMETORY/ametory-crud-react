@@ -82,11 +82,11 @@ const generateCrud = async (entity, fields) => {
     const templatesDir = './templates';
     const outputDir = './src';
 
-    const entityCamelCase = entity.charAt(0).toLowerCase() + entity.slice(1);
+    const entityCamelCase = entity.charAt(0).toLowerCase() + entity.slice(1).replaceAll(" ", "")
     const entitySnakeCase = entity.match(/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g).map(s => s.toLowerCase()).join('_');
     // const toPascalCase = (str) => str.replace(/\w+/g, (w) => w[0].toUpperCase() + w.slice(1).toLowerCase());
 
-    const componentsDir = path.join(outputDir, 'components', entity);
+    const componentsDir = path.join(outputDir, 'components', toPascalCase(entity));
     await fs.ensureDir(componentsDir);
 
     const templates = ['List.ejs', 'Form.ejs', 'Api.ejs'];
@@ -95,7 +95,7 @@ const generateCrud = async (entity, fields) => {
         const templatePath = path.join(templatesDir, template);
         const outputFileName = template.replace('List', `${toPascalCase(entity)}List`)
             .replace('Form', `${toPascalCase(entity)}Form`)
-            .replace('Api', `${entity.toLowerCase()}Api`);
+            .replace('Api', `${entityCamelCase}Api`);
 
         const newDir = path.join(componentsDir, template.replaceAll(".ejs", ""));
         await fs.ensureDir(newDir);
@@ -105,7 +105,7 @@ const generateCrud = async (entity, fields) => {
             outputFileName.replace('.ejs', template.includes('Api') ? '.ts' : '.tsx')
         );
 
-
+        console.log("outputPath", outputPath)
 
         const content = await ejs.renderFile(templatePath, { entity, entityCamelCase, fields, entitySnakeCase, toPascalCase, toSnakeCase });
         await fs.writeFile((outputPath), content, 'utf-8');
@@ -178,7 +178,7 @@ const generateModel = async (featureName, fields, outputDir) => {
     const interfaceContent = `// Auto-generated Model for ${toPascalCase(featureName)}
   export interface ${capitalize(toPascalCase(featureName))} {
   id: string
-  ${fields.map((field) => `  ${field.name.toLowerCase().replace(/_/g, '')}: ${mapToTsType(field.type)};`).join("\n")}
+  ${fields.map((field) => `  ${toSnakeCase(field.name)}: ${mapToTsType(field.type)};`).join("\n")}
 }
     `;
 
