@@ -1,0 +1,48 @@
+import React from 'react';
+import { useState, useEffect } from 'react';
+import { getAll<%= toPascalCase(entity) %>s } from '../Api/<%= entityCamelCase %>Api';
+import { <%= toPascalCase(entity) %> } from '../../../models/<%= toPascalCase(entity) %>';
+import { BsTrash3 } from "react-icons/bs";
+
+const <%= toPascalCase(entity) %>List: React.FC = () => {
+  const [data, setData] = useState<<%= toPascalCase(entity) %>[]>();
+
+  useEffect(() => {
+    getAll<%= toPascalCase(entity) %>s().then(setData);
+  }, []);
+
+  return (
+    <div className="p-4">
+      <h1 className="text-xl font-bold mb-4"><%= entity %> List</h1>
+      <table className="table-auto w-full border-collapse border border-gray-300">
+        <thead>
+          <tr>
+            <% fields.forEach((field) => { %>
+              <th className="border border-gray-300 p-2"><%= toPascalCase(field.name) %></th>
+            <% }); %>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {data?.map((item) => (
+            <tr key={item.id}>
+              <% fields.forEach((field) => { %>
+                <td className="border border-gray-300 p-2">{item.<%= field.name.replace(/\W+/g, " ")
+                  .split(/ |\B(?=[A-Z])/)
+                  .map(word => word.toLowerCase())
+                  .join('_') %>}</td>
+              <% }); %>
+              <td>
+                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                  <BsTrash3 />
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+export default <%= toPascalCase(entity) %>List;

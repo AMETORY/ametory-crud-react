@@ -3,7 +3,7 @@ import { create<%= toPascalCase(entity) %>, update<%= toPascalCase(entity) %> } 
 import { <%= toPascalCase(entity) %> } from '../../../models/<%= toPascalCase(entity) %>';
 
 const <%= toPascalCase(entity) %>Form: React.FC<{ id?: string }> = ({ id }) => {
-  const [formData, setFormData] = useState<<%= entity %>>();
+  const [formData, setFormData] = useState<<%= toPascalCase(entity) %>>();
 
   const handleSubmit = async () => {
     if (id) {
@@ -37,4 +37,4 @@ const <%= toPascalCase(entity) %>Form: React.FC<{ id?: string }> = ({ id }) => {
   );
 };
 
-export default <%= entity %>Form;
+export default <%= toPascalCase(entity) %>Form;
