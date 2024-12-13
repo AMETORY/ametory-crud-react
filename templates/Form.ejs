@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { create<%= entity %>, update<%= entity %> } from '../Api/<%= entityCamelCase %>Api';
 import { <%= entity %> } from '../../../models/<%= entity %>';
 
-const <%= entity %>Form: React.FC<{ id?: string }> = ({ id }) => {
+const <%= toPascalCase(entity) %>Form: React.FC<{ id?: string }> = ({ id }) => {
   const [formData, setFormData] = useState<<%= entity %>>();
 
   const handleSubmit = async () => {
     if (id) {
-      await update<%= entity %>(id, formData);
+      await update<%= toPascalCase(entity) %>(id, formData);
     } else {
-      await create<%= entity %>(formData);
+      await create<%= toPascalCase(entity) %>(formData);
     }
   };
 

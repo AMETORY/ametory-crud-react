@@ -1,8 +1,8 @@
 import { TOKEN } from "../../../utils/constants";
 import { asyncLocalStorage } from "../../../utils/helper";
 
-export const getAll<%= entity %>s = async () => {
-  const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/<%= entity %>`,{
+export const getAll<%= toPascalCase(entity) %>s = async () => {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/<%= toPascalCase(entity) %>`,{
     headers: {
       Authorization: `Bearer ${await (asyncLocalStorage.getItem(TOKEN))}`,
     },
@@ -10,8 +10,8 @@ export const getAll<%= entity %>s = async () => {
   return (await response.json()).data;
 };
 
-export const getOne<%= entity %> = async (id: string) => {
-  const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/<%= entity %>/${id}`,{
+export const getOne<%= toPascalCase(entity) %> = async (id: string) => {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/<%= toPascalCase(entity) %>/${id}`,{
     headers: {
       Authorization: `Bearer ${await (asyncLocalStorage.getItem(TOKEN))}`,
     },
@@ -19,8 +19,8 @@ export const getOne<%= entity %> = async (id: string) => {
   return (await response.json()).data;
 };
 
-export const create<%= entity %> = async (data: any) => {
-  const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/<%= entity %>`, {
+export const create<%= toPascalCase(entity) %> = async (data: any) => {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/<%= toPascalCase(entity) %>`, {
     method: "POST",
     body: JSON.stringify(data),
     headers: {
@@ -30,8 +30,8 @@ export const create<%= entity %> = async (data: any) => {
   return response.json();
 };
 
-export const update<%= entity %> = async (id: string, data: any) => {
-  const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/<%= entity %>/${id}`, {
+export const update<%= toPascalCase(entity) %> = async (id: string, data: any) => {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/<%= toPascalCase(entity) %>/${id}`, {
     method: "PUT",
     body: JSON.stringify(data),
     headers: {
@@ -41,8 +41,8 @@ export const update<%= entity %> = async (id: string, data: any) => {
   return response.json();
 };
 
-export const delete<%= entity %> = async (id: string) => {
-  const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/<%= entity %>/${id}`, {
+export const delete<%= toPascalCase(entity) %> = async (id: string) => {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/<%= toPascalCase(entity) %>/${id}`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${await (asyncLocalStorage.getItem(TOKEN))}`,

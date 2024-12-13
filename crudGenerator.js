@@ -36,7 +36,10 @@ const mapToTsType = (dbType) => {
     }
 };
 
-
+const toPascalCase = (str) => str
+    .match(/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g)
+    .map((x) => x.charAt(0).toUpperCase() + x.slice(1).toLowerCase())
+    .join("")
 // CLI Argument Parsing
 const argv = yargs(hideBin(process.argv))
     .option('file', {
@@ -48,6 +51,7 @@ const argv = yargs(hideBin(process.argv))
     .help()
     .argv;
 
+const toSnakeCase = (str) => str.match(/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g).map(s => s.toLowerCase()).join('_');
 // Parse Excel File
 function parseExcel(filePath) {
     const workbook = xlsx.readFile(filePath);
@@ -80,17 +84,17 @@ const generateCrud = async (entity, fields) => {
 
     const entityCamelCase = entity.charAt(0).toLowerCase() + entity.slice(1);
     const entitySnakeCase = entity.match(/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g).map(s => s.toLowerCase()).join('_');
-    const toPascalCase = (str) => str.replace(/\w+/g, (w) => w[0].toUpperCase() + w.slice(1).toLowerCase());
-    const toSnakeCase = (str) => str.match(/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g).map(s => s.toLowerCase()).join('_');
+    // const toPascalCase = (str) => str.replace(/\w+/g, (w) => w[0].toUpperCase() + w.slice(1).toLowerCase());
+
     const componentsDir = path.join(outputDir, 'components', entity);
     await fs.ensureDir(componentsDir);
 
     const templates = ['List.ejs', 'Form.ejs', 'Api.ejs'];
-
+    console.log("toPascalCase", toPascalCase(entity))
     for (const template of templates) {
         const templatePath = path.join(templatesDir, template);
-        const outputFileName = template.replace('List', `${entity}List`)
-            .replace('Form', `${entity}Form`)
+        const outputFileName = template.replace('List', `${toPascalCase(entity)}List`)
+            .replace('Form', `${toPascalCase(entity)}Form`)
             .replace('Api', `${entity.toLowerCase()}Api`);
 
         const newDir = path.join(componentsDir, template.replaceAll(".ejs", ""));
@@ -104,7 +108,7 @@ const generateCrud = async (entity, fields) => {
 
 
         const content = await ejs.renderFile(templatePath, { entity, entityCamelCase, fields, entitySnakeCase, toPascalCase, toSnakeCase });
-        await fs.writeFile(outputPath, content, 'utf-8');
+        await fs.writeFile((outputPath), content, 'utf-8');
     }
 
     console.log(`CRUD for ${entity} generated successfully.`);
@@ -139,7 +143,7 @@ const generateCrud = async (entity, fields) => {
 
 const generatePage = async (featureName, fields, outputDir) => {
     const pageDir = path.join(outputDir, "pages");
-    const pageFile = path.join(pageDir, `${featureName}Page.tsx`);
+    const pageFile = path.join(pageDir, `${toPascalCase(featureName)}Page.tsx`);
 
     // Ensure models directory exists
     await fs.ensureDir(pageDir);
@@ -148,16 +152,16 @@ const generatePage = async (featureName, fields, outputDir) => {
     const interfaceContent = `import type { FC } from 'react';
 import Layout from '../components/Layout';
 
-interface ${featureName}PageProps {}
+interface ${toPascalCase(featureName)}PageProps {}
 
-const ${featureName}Page: FC<${featureName}PageProps> = ({}) => {
+const ${toPascalCase(featureName)}Page: FC<${toPascalCase(featureName)}PageProps> = ({}) => {
         return (
             <Layout>
-                <h1>${featureName} Page</h1>
+                <h1>${toPascalCase(featureName)} Page</h1>
             </Layout>
         );
 }
-export default ${featureName}Page;`;
+export default ${toPascalCase(featureName)}Page;`;
 
     // Write to file
     await fs.writeFile(pageFile, interfaceContent, "utf-8");
@@ -165,14 +169,14 @@ export default ${featureName}Page;`;
 };
 const generateModel = async (featureName, fields, outputDir) => {
     const modelDir = path.join(outputDir, "models");
-    const modelFile = path.join(modelDir, `${featureName}.ts`);
+    const modelFile = path.join(modelDir, `${toPascalCase(featureName)}.ts`);
 
     // Ensure models directory exists
     await fs.ensureDir(modelDir);
 
     // Create TypeScript interface content
-    const interfaceContent = `// Auto-generated Model for ${featureName}
-  export interface ${capitalize(featureName)} {
+    const interfaceContent = `// Auto-generated Model for ${toPascalCase(featureName)}
+  export interface ${capitalize(toPascalCase(featureName))} {
   id: string
   ${fields.map((field) => `  ${field.name.toLowerCase().replace(/_/g, '')}: ${mapToTsType(field.type)};`).join("\n")}
 }
@@ -192,7 +196,7 @@ const updateAppFile = async (featureName, outputDir) => {
 
     const appFilePath = path.join(outputDir, "AppRoutes.tsx");
     const routePath = `/${featureName.toLowerCase()}`;
-    const componentImport = `import ${capitalize(featureName)}Page from './pages/${capitalize(featureName)}Page';`;
+    const componentImport = `import ${toPascalCase(featureName)}Page from './pages/${toPascalCase(featureName)}Page';`;
     // console.log(appFilePath)
     // Check if App.tsx exists
     if (!fs.existsSync(appFilePath)) {
@@ -218,12 +222,12 @@ const updateAppFile = async (featureName, outputDir) => {
     // Add new route to the router
     const updatedRoutes = updatedImports.replace(
         /(<Routes>[\s\S]*?)(<\/Routes>)/,
-        `$1  <Route path="${routePath}" element={<${capitalize(featureName)}Page />} />\n$2`
+        `$1  <Route path="${toSnakeCase(routePath)}" element={<${toPascalCase(featureName)}Page />} />\n$2`
     );
 
     // Write updated content back to App.tsx
     await fs.writeFile(appFilePath, updatedRoutes, "utf-8");
-    console.log(`✅ App.tsx updated with route: ${routePath}`);
+    console.log(`✅ App.tsx updated with route: ${toSnakeCase(routePath)}`);
 };
 
 // Helper function to capitalize feature name
